@@ -1,49 +1,101 @@
-// Realizar un juego de tic-tac-toe (gato) para aprender sobre eventos en JS
-//  y manejo de variables.
+let turno = true;
 
-// El juego debe contener lo siguiente:
+const botones = document.querySelectorAll(".cuad");
+const reiniciar = document.querySelector("#reset");
+let continuar = true;
+let ganadasx = 0;
+let ganadaso = 0;
+let empates = 0;
 
-// Tablero
-// Fichas de Jugador ( X y O )
-// Botón de reinicio
-// Detección del ganador
-// Marcador de juegos ganados
-// Cambios de estilo al detectar ganador
+function update() {
+    document.querySelector("#marcadorx").textContent = ganadasx;
+    document.querySelector("#marcadoro").textContent = ganadaso;
+    document.querySelector("#marcadorem").textContent = empates;
 
-let tablero=["", "", "","", "", "","", "", ""];
-let turno="X";
+}
 
-function clickcasilla(evt){
-    let id = Number(evt.target.id[1])-1;
-    if(tablero[id]===""){
-        tablero[id] = turno;
-        evt.target.classList.add(turno);
-        if( turno === "X"){
-            turno="O";
+for (let i = 0; i < botones.length; i++) {
+    botones[i].addEventListener("click", (e) => {
+        //     /*console.log(e);*/
 
-        }else{
-            turno="X";
+        if (turno && e.target.innerHTML === "" && continuar) {
+            contador++;
+            e.target.innerHTML = "O";
+            turno = !turno;
+            if (ganador() === 0) {
+                document.querySelector("body").classList.add("verde");
+                ganadaso++;
+                document.querySelector("#winner").textContent = "El ganador fue O";
+                update()
+            }
+        } else if (e.target.innerHTML === "" && continuar) {
+            contador++;
+            e.target.innerHTML = "X";
+            turno = !turno;
+            if (ganador() === 1) {
+                document.querySelector("body").classList.add("rojo");
+                ganadasx++;
+                document.querySelector("#winner").textContent = "El ganador fue X";
+                update()
+            }
+
         }
+        if (ganador() === -1) {
+            empates++;
+            update()
+            document.querySelector("#winner").textContent = "Empate";
+        }
+
+
+    });
+
+}
+
+reiniciar.addEventListener("click", (e) => {
+    document.querySelector("body").classList.remove("verde");
+    document.querySelector("body").classList.remove("rojo");
+    continuar = true;
+    contador = 0;
+    document.querySelector("#winner").textContent = "";
+    for (let i = 0; i < botones.length; i++) {
+        botones[i].innerHTML = "";
     }
-    
-}
+});
 
-function ganador(){
-    // Revisar si alguien gano
-    // Si alguien gano
-}
+const lista = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+];
 
-function reiniciar(){
-    let casillas = document.querySelectorAll(".casilla");
-    tablero=["", "", "","", "", "","", "", ""];
-    for(var i=0; i<9;i++){
-        casillas[i].classList.remove("X", "O");
-    }    
-}
+let contador = 0;
 
-let casillas = document.querySelectorAll(".casilla");
-for(var i=0; i<9;i++){
-    casillas[i].addEventListener('click',clickcasilla);
-}
+function ganador() {
 
-document.querySelector("#reiniciar").addEventListener('click',reiniciar);
+    for (let i = 0; i < lista.length; i++) {
+
+        if (botones[lista[i][0]].innerHTML === "X" && botones[lista[i][1]].innerHTML === "X" && botones[lista[i][2]].innerHTML === "X") {
+            
+            continuar = false;
+            return 1;
+
+        } else if (botones[lista[i][0]].innerHTML === "O" && botones[lista[i][1]].innerHTML === "O" && botones[lista[i][2]].innerHTML === "O") {
+            
+            continuar = false;
+            return 0;
+
+        }
+
+
+    }
+    if (contador === 9) {
+       
+        continuar = false;
+        return -1;
+    }
+}
